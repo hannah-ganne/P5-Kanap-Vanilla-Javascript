@@ -1,11 +1,10 @@
-const metaTitle = document.getElementsByTagName('title');
 const itemImg = document.querySelector('.item__img')
 const productTitle = document.getElementById('title');
 const productPrice = document.getElementById('price');
 const productDescription = document.getElementById('description');
 const colorSelect = document.getElementById('colors');
 const itemQuantity = document.getElementById('quantity');
-const addToCardBtn = document.getElementById('addToCart');
+const addToCartBtn = document.getElementById('addToCart');
 
 // get the product ID
 let str = window.location.href;
@@ -17,6 +16,11 @@ async function getProductData() {
     const res = await fetch(`http://localhost:3000/api/products/${productId}`);
     const data = await res.json();
     return data;
+}
+
+// update meta title
+function updateMetaTitle(product) {
+    document.title = `${product.name}`
 }
 
 // update item image
@@ -44,11 +48,31 @@ function updateProductInfo(product) {
     })
 }
 
+// Save items in localStorage (Add to cart button)
+function addToCart () {
+    let cart = JSON.parse(localStorage.getItem('itemsInCart')) || [];
+
+    let item = cart.find(item => item.id === `${productId}` && item.color === `${colorSelect.value}`);
+    if (item) {
+        item.quantity = Number(item.quantity) + Number(`${itemQuantity.value}`);
+    } else {
+        cart.push({'id': `${productId}`, 'color': `${colorSelect.value}`, 'quantity': Number(`${itemQuantity.value}`)})
+    }
+
+    localStorage.setItem('itemsInCart', JSON.stringify(cart));
+    console.log(cart);
+}
+
+
 // update DOM
 async function main() {
     const productData = await getProductData();
+    updateMetaTitle(productData);
     updateItemImg(productData);
     updateProductInfo(productData);
 }
 
 main();
+
+// Event Listener
+addToCartBtn.addEventListener('click', addToCart)
