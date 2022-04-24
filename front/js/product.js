@@ -27,7 +27,7 @@ function updateMetaTitle(product) {
 function updateItemImg(product) {
     const productImg = document.createElement('img');
     productImg.setAttribute('src', `${product.imageUrl}`);
-    productImg.setAttribute('alt', `Lorem ipsum dolor sit amet, ${product.name}`);
+    productImg.setAttribute('alt', `${product.altTxt}`);
 
     itemImg.appendChild(productImg);
 }
@@ -56,11 +56,10 @@ function addToCart () {
     if (item) {
         item.quantity = Number(item.quantity) + Number(`${itemQuantity.value}`);
     } else {
-        cart.push({'id': `${productId}`, 'color': `${colorSelect.value}`, 'quantity': Number(`${itemQuantity.value}`)})
+        cart.push({'id': `${productId}`, 'color': `${colorSelect.value}`, 'quantity': Number(`${itemQuantity.value}`), 'price': Number(`${productPrice.textContent}`)})
     }
 
     localStorage.setItem('itemsInCart', JSON.stringify(cart));
-    console.log(cart);
 }
 
 

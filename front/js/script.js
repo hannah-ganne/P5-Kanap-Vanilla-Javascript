@@ -16,7 +16,7 @@ function createCardInfo(product) {
 
     const productImg = document.createElement('img');
     productImg.setAttribute('src', `${product.imageUrl}`);
-    productImg.setAttribute('alt', `Lorem ipsum dolor sit amet, ${product.name}`);
+    productImg.setAttribute('alt', `${product.altTxt}`);
 
     const productInfoTitle = document.createElement('h3');
     productInfoTitle.classList.add('productName');
