@@ -1,3 +1,5 @@
+"use strict";
+
 const itemImg = document.querySelector('.item__img')
 const productTitle = document.getElementById('title');
 const productPrice = document.getElementById('price');
@@ -24,8 +26,9 @@ function updateMetaTitle(product) {
 }
 
 // update item image
+const productImg = document.createElement('img');
 function updateItemImg(product) {
-    const productImg = document.createElement('img');
+
     productImg.setAttribute('src', `${product.imageUrl}`);
     productImg.setAttribute('alt', `${product.altTxt}`);
 
@@ -49,18 +52,23 @@ function updateProductInfo(product) {
 }
 
 // Save items in localStorage (Add to cart button)
-function addToCart () {
+
+async function addToCart () {
     let cart = JSON.parse(localStorage.getItem('itemsInCart')) || [];
 
-    let item = cart.find(item => item.id === `${productId}` && item.color === `${colorSelect.value}`);
-    if (item) {
-        item.quantity = Number(item.quantity) + Number(`${itemQuantity.value}`);
-    } else {
-        cart.push({'id': `${productId}`, 'color': `${colorSelect.value}`, 'quantity': Number(`${itemQuantity.value}`), 'price': Number(`${productPrice.textContent}`)})
+    let item = cart.find(item => item._id === `${productId}` && item.selectedColor === `${colorSelect.value}`);
+    if (item && `${colorSelect.value}` !== "" && `${itemQuantity.value}` <= 100 && `${itemQuantity.value}` > 0) {
+        item.quantity += Number(`${itemQuantity.value}`);
+    } else if (`${colorSelect.value}` !== "" && `${itemQuantity.value}` <= 100 && `${itemQuantity.value}` > 0) {
+        const itemData = await getProductData();
+        itemData.selectedColor = `${colorSelect.value}`;
+        itemData.quantity = Number(`${itemQuantity.value}`)
+        cart.push(itemData);
+        }
+        
+        localStorage.setItem('itemsInCart', JSON.stringify(cart));
     }
 
-    localStorage.setItem('itemsInCart', JSON.stringify(cart));
-}
 
 
 // update DOM

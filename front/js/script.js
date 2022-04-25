@@ -1,14 +1,17 @@
+"use strict";
+
 const items = document.getElementById('items');
 
-//async function getProductsData() {
-  //  const res = await fetch('http://localhost:3000/api/products');
-  //  const data = await res.json();
-  //  return data;
-//}
-const getProductsData = () => fetch('http://localhost:3000/api/products')
-    .then(res => res.json())
-    .then(data => data)
-    .catch(err => console.log("There's an error retrieving the data", err));
+async function getProductsData() {
+    const res = await fetch('http://localhost:3000/api/products');
+    const data = await res.json();
+    return data;
+}
+
+//const getProductsData = () => fetch('http://localhost:3000/api/products')
+//    .then(res => res.json())
+//    .then(data => data)
+//    .catch(err => console.log("There's an error retrieving the data", err));
 
 // create product card info
 function createCardInfo(product) {
