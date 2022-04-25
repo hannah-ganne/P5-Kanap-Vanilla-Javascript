@@ -3,9 +3,9 @@
 const cartItems = document.getElementById('cart__items');
 const totalQuantity = document.getElementById('totalQuantity');
 const totalPrice = document.getElementById('totalPrice');
-const deleteBtn = document.querySelector('.deleteItem');
 
-const itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
+
+let itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
 
 // Create Cart Item Image
 function createImage(product) {
@@ -80,6 +80,18 @@ function createContentSettingsQuantity(product) {
     return contentSettingsQuantity;
 }
 
+// Update Quantity in localStorage
+function updateQuantity(e) {
+    if (e.target.classList.contains("itemQuantity")) {
+        const id = e.target.closest("article").dataset.id;
+        const color = e.target.closest("article").dataset.color;
+        const condition = item => item._id === id && item.selectedColor === color;
+        let index = itemsInCart.findIndex(condition);
+        itemsInCart[index].quantity = +e.target.value;
+        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
+        } 
+    }
+
 // Set multiple attributes
 function setAttributes(element, attribute) {
     for (let key in attribute) {
@@ -100,9 +112,7 @@ function createDeleteBtn() {
     return deleteBtn;
 }
 
-function deleteItem() {
-    
-}
+
 
 function createContent(product) {
     const cartItemContent = document.createElement('div');
@@ -132,9 +142,8 @@ function createCartItem(product) {
 }
 
 function main() {
-    const itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
-
     for (let i = 0; i < itemsInCart.length; i++) {
+
         if(itemsInCart[i]) {
             cartItems.appendChild(createCartItem(itemsInCart[i]));
         }
@@ -144,15 +153,16 @@ function main() {
 main();
 
 // Event Listeners
-document.body.addEventListener('change', function(e) {
-    if (e.target.classList.contains("itemQuantity")) {
+document.body.addEventListener('change', updateQuantity);
+document.body.addEventListener('click', function(e) {
+    if (e.target.classList.contains("deleteItem")) {
         const id = e.target.closest("article").dataset.id;
         const color = e.target.closest("article").dataset.color;
         const condition = item => item._id === id && item.selectedColor === color;
         let index = itemsInCart.findIndex(condition);
-        itemsInCart[index].quantity = +e.target.value;
+        itemsInCart.splice(index, 1);
         localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
-        } 
-    }
-)
-//deleteBtn.addEventListener('click', deleteItem);
+        }
+        cartItems.innerHTML = "";
+        main();
+});
