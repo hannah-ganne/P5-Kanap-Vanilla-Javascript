@@ -63,9 +63,10 @@ async function addToCart () {
         const itemData = await getProductData();
         itemData.selectedColor = `${colorSelect.value}`;
         itemData.quantity = Number(`${itemQuantity.value}`)
+        itemData.price = ""
         cart.push(itemData);
         }
-        
+
         localStorage.setItem('itemsInCart', JSON.stringify(cart));
     }
 
