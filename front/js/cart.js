@@ -118,6 +118,9 @@ function createContent(product) {
 function createCartItem(product) {
     const cartItem = document.createElement('article');
     cartItem.classList.add('cart__item');
+    setAttributes(cartItem, 
+        {'data-id': product._id,
+        'data-color': product.selectedColor})
 
     const cartItemImg = createImage(product);
     const cartItemContent = createContent(product);
@@ -141,4 +144,15 @@ function main() {
 main();
 
 // Event Listeners
+document.body.addEventListener('change', function(e) {
+    if (e.target.classList.contains("itemQuantity")) {
+        const id = e.target.closest("article").dataset.id;
+        const color = e.target.closest("article").dataset.color;
+        const condition = item => item._id === id && item.selectedColor === color;
+        let index = itemsInCart.findIndex(condition);
+        itemsInCart[index].quantity = +e.target.value;
+        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
+        } 
+    }
+)
 //deleteBtn.addEventListener('click', deleteItem);
