@@ -4,8 +4,29 @@ const cartItems = document.getElementById('cart__items');
 const totalQuantity = document.getElementById('totalQuantity');
 const totalPrice = document.getElementById('totalPrice');
 
-
 let itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
+
+async function getProductsData() {
+    const res = await fetch('http://localhost:3000/api/products');
+    const data = await res.json();
+    return data;
+}
+
+async function getPrice(id) {
+    const productsData = await getProductsData();
+    const condition = item => item._id === id;
+    const index = productsData.findIndex(condition);
+    const price = productsData[index].price;
+    return price
+}
+
+// Get Prices
+/*async function getPrices() {
+    let prices = [];
+    const productsData = await getProductsData();
+    productsData.forEach(item => {prices.push({'name': item.name, 'price': item.price})})
+    return prices;
+}*/
 
 // Create Cart Item Image
 function createImage(product) {
@@ -23,6 +44,7 @@ function createImage(product) {
 }
 
 // Create Cart Item Content Description
+
 function createContentDescription(product) {
     const contentDescription = document.createElement('div');
     contentDescription.classList.add('cart__item__content__description');
@@ -34,7 +56,9 @@ function createContentDescription(product) {
     productColor.textContent = `${product.selectedColor}`;
 
     const productPrice = document.createElement('p');
-    productPrice.textContent = `${product.price} €`;
+    const id = product._id;
+    const price = getPrice(id);
+    productPrice.textContent = price
 
     contentDescription.appendChild(productName);
     contentDescription.appendChild(productColor);
