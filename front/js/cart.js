@@ -45,7 +45,7 @@ function createImage(product) {
 
 // Create Cart Item Content Description
 
-function createContentDescription(product) {
+async function createContentDescription(product) {
     const contentDescription = document.createElement('div');
     contentDescription.classList.add('cart__item__content__description');
 
@@ -57,8 +57,8 @@ function createContentDescription(product) {
 
     const productPrice = document.createElement('p');
     const id = product._id;
-    const price = getPrice(id);
-    productPrice.textContent = price
+    const price = await getPrice(id);
+    productPrice.textContent = `${price} €`
 
     contentDescription.appendChild(productName);
     contentDescription.appendChild(productColor);
@@ -138,18 +138,18 @@ function createDeleteBtn() {
 
 
 
-function createContent(product) {
+async function createContent(product) {
     const cartItemContent = document.createElement('div');
     cartItemContent.classList.add('cart__item__content')
 
-    cartItemContent.appendChild(createContentDescription(product));
+    cartItemContent.appendChild(await createContentDescription(product));
     cartItemContent.appendChild(createContentSettings(product));
 
     return cartItemContent;
 }
 
 
-function createCartItem(product) {
+async function createCartItem(product) {
     const cartItem = document.createElement('article');
     cartItem.classList.add('cart__item');
     setAttributes(cartItem, 
@@ -157,7 +157,7 @@ function createCartItem(product) {
         'data-color': product.selectedColor})
 
     const cartItemImg = createImage(product);
-    const cartItemContent = createContent(product);
+    const cartItemContent = await createContent(product);
 
     cartItem.appendChild(cartItemImg);
     cartItem.appendChild(cartItemContent);
@@ -165,11 +165,11 @@ function createCartItem(product) {
     return cartItem
 }
 
-function main() {
+async function main() {
     for (let i = 0; i < itemsInCart.length; i++) {
 
         if(itemsInCart[i]) {
-            cartItems.appendChild(createCartItem(itemsInCart[i]));
+            cartItems.appendChild(await createCartItem(itemsInCart[i]));
         }
     }
 }
