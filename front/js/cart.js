@@ -4,6 +4,13 @@ const cartItems = document.getElementById('cart__items');
 const totalQuantity = document.getElementById('totalQuantity');
 const totalPrice = document.getElementById('totalPrice');
 
+const form = document.querySelector('.cart__order__form');
+const firstName = document.getElementById('firstName');
+const lastName = document.getElementById('lastName');
+const address = document.getElementById('address');
+const city = document.getElementById('city');
+const email = document.getElementById('email');
+
 let itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
 
 async function getProductsData() {
@@ -43,8 +50,7 @@ function createImage(product) {
     return cartItemImgEl
 }
 
-// Create Cart Item Content Description
-
+// Create Cart Item Content Description div
 async function createContentDescription(product) {
     const contentDescription = document.createElement('div');
     contentDescription.classList.add('cart__item__content__description');
@@ -67,6 +73,7 @@ async function createContentDescription(product) {
     return contentDescription;
 }
 
+// Create Cart Item Content Settings div
 function createContentSettings(product) {
     const contentSettings = document.createElement('div');
     contentSettings.classList.add('cart__item__content__settings');
@@ -77,6 +84,7 @@ function createContentSettings(product) {
     return contentSettings;
 }
 
+// Create Cart Item Content Setting Quantity div
 function createContentSettingsQuantity(product) {
     const contentSettingsQuantity = document.createElement('div');
     contentSettingsQuantity.classList.add('cart__item__content__settings__quantity');
@@ -112,7 +120,9 @@ function updateQuantity(e) {
         const condition = item => item._id === id && item.selectedColor === color;
         let index = itemsInCart.findIndex(condition);
         itemsInCart[index].quantity = +e.target.value;
-        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
+        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart)); 
+        displayTotalQuantity();     
+        displayTotalPrice();  
         } 
     }
 
@@ -123,6 +133,7 @@ function setAttributes(element, attribute) {
     }
 }
 
+// Create a deleteItem button
 function createDeleteBtn() {
     const deleteBtn = document.createElement('div');
     deleteBtn.classList.add('cart__item__content__settings__delete');
@@ -137,7 +148,7 @@ function createDeleteBtn() {
 }
 
 
-
+// Create Content div
 async function createContent(product) {
     const cartItemContent = document.createElement('div');
     cartItemContent.classList.add('cart__item__content')
@@ -148,7 +159,7 @@ async function createContent(product) {
     return cartItemContent;
 }
 
-
+// Create Cart Item article
 async function createCartItem(product) {
     const cartItem = document.createElement('article');
     cartItem.classList.add('cart__item');
@@ -165,6 +176,28 @@ async function createCartItem(product) {
     return cartItem
 }
 
+// Display total quantity
+function displayTotalQuantity() {
+    let total = 0;
+    itemsInCart.forEach(item => {
+        total += item.quantity;
+    })
+    totalQuantity.textContent = total;
+}
+
+// Display total price
+async function displayTotalPrice() {
+    let total = 0;
+    for (let i = 0; i < itemsInCart.length; i++) {
+        const id = itemsInCart[i]._id
+        const price = await getPrice(id);
+        const quantity = itemsInCart[i].quantity;
+        total += (price * quantity);
+    }
+    totalPrice.textContent = total;
+}
+
+// Update Cart Page DOM
 async function main() {
     for (let i = 0; i < itemsInCart.length; i++) {
 
@@ -175,9 +208,50 @@ async function main() {
 }
 
 main();
+displayTotalQuantity();
+displayTotalPrice();
+
+// Show input error message
+function showError(input, message) {
+    const parent = input.parentElement;
+    const errorMsg = parent.lastElementChild;
+    errorMsg.textContent = message;
+}
+
+// Show success (remove error message)
+function showSuccess(input) {
+    const parent = input.parentElement;
+    const errorMsg = parent.lastElementChild;
+    errorMsg.textContent = ""
+}
+
+// Check if First Name and Last Name are valid (no special characters or numbers)
+function checkNames(input) {
+    const regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+
+    regex.test(input.value) ? showSuccess(input) : showError(input, 'Please check your name again')
+    }
+
+// Check if city name is valid (no special characters or numbers)
+function checkCity(input) {
+    const regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    regex.test(input.value) ? showSuccess(input) : showError(input, 'Please enter a valid city name')
+}
+
+// Check if email address is valid
+function checkEmail(input) {
+    const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+  regex.test(input.value) ? showSuccess(input) : showError(input, 'Please enter a valid email address');
+
+}
 
 // Event Listeners
+
+//Update quantity in localStorage when the user changed manually
 document.body.addEventListener('change', updateQuantity);
+
+//Delete the item when the user clicked on the deleteItem button
 document.body.addEventListener('click', function(e) {
     if (e.target.classList.contains("deleteItem")) {
         const id = e.target.closest("article").dataset.id;
@@ -189,4 +263,16 @@ document.body.addEventListener('click', function(e) {
         }
         cartItems.innerHTML = "";
         main();
+        displayTotalQuantity();  
+        displayTotalPrice(); 
 });
+
+//Validate form
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    checkNames(firstName);
+    checkNames(lastName);
+    checkCity(city);
+    checkEmail(email);
+})
