@@ -13,11 +13,16 @@ const email = document.getElementById('email');
 
 let itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
 
-async function getProductsData() {
-    const res = await fetch('http://localhost:3000/api/products');
-    const data = await res.json();
-    return data;
-}
+const getProductsData = () => fetch('http://localhost:3000/api/products')
+   .then(res => {
+        if(res.ok) {
+            return res.json();
+        }
+        throw new Error("There's an error retrieving the data")
+   })
+   .then(data => data)
+   .catch(err => console.log(`There's an error: ${err}`));
+   
 
 async function getPrice(id) {
     const productsData = await getProductsData();

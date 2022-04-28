@@ -2,17 +2,16 @@
 
 const items = document.getElementById('items');
 
-async function getProductsData() {
-    const res = await fetch('http://localhost:3000/api/products');
-    const data = await res.json();
-    return data;
-}
-
-//const getProductsData = () => fetch('http://localhost:3000/api/products')
-//    .then(res => res.json())
-//    .then(data => data)
-//    .catch(err => console.log("There's an error retrieving the data", err));
-
+const getProductsData = () => fetch('http://localhost:3000/api/products')
+   .then(res => {
+        if(res.ok) {
+            return res.json();
+        }
+        throw new Error("There's an error retrieving the data")
+   })
+   .then(data => data)
+   .catch(err => console.log(`There's an error: ${err}`));
+   
 // create product card info
 function createCardInfo(product) {
     const productInfo = document.createElement('article');
