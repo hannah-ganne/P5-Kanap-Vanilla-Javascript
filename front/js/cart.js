@@ -23,14 +23,19 @@ const getProductsData = () => fetch('http://localhost:3000/api/products')
    .then(data => data)
    .catch(err => console.log(`There's an error: ${err}`));
    
+const getPrice = (id) => getProductsData()
+.then(products => {
+    const index = products.findIndex(item => item._id === id)
+    const price = products[index].price
+    return price})
 
-async function getPrice(id) {
-    const productsData = await getProductsData();
-    const condition = item => item._id === id;
-    const index = productsData.findIndex(condition);
-    const price = productsData[index].price;
-    return price
-}
+// async function getPrice(id) {
+//     const productsData = await getProductsData();
+//     const condition = item => item._id === id;
+//     const index = productsData.findIndex(condition);
+//     const price = productsData[index].price;
+//     return price
+// }
 
 // Update Quantity in localStorage
 function updateQuantity(e) {
