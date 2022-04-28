@@ -3,6 +3,7 @@
 const cartItems = document.getElementById('cart__items');
 const totalQuantity = document.getElementById('totalQuantity');
 const totalPrice = document.getElementById('totalPrice');
+const deleteItem = document.querySelector('.deleteItem')
 
 const form = document.querySelector('.cart__order__form');
 const firstName = document.getElementById('firstName');
@@ -36,20 +37,6 @@ const getPrice = (id) => getProductsData()
 //     const price = productsData[index].price;
 //     return price
 // }
-
-// Update Quantity in localStorage
-function updateQuantity(e) {
-    if (e.target.classList.contains("itemQuantity")) {
-        const id = e.target.closest("article").dataset.id;
-        const color = e.target.closest("article").dataset.color;
-        const condition = item => item._id === id && item.selectedColor === color;
-        let index = itemsInCart.findIndex(condition);
-        itemsInCart[index].quantity = +e.target.value;
-        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart)); 
-        displayTotalQuantity();     
-        displayTotalPrice();  
-        } 
-    }
 
 // Display total quantity
 function displayTotalQuantity() {
@@ -152,21 +139,47 @@ function checkEmail(input) {
 // Event Listeners
 
 //Update quantity in localStorage when the user changed manually
-document.body.addEventListener('change', updateQuantity);
+    document.body.addEventListener('change', function(e) {
+        if (e.target.classList.contains("itemQuantity")) {
+            e.stopPropagation()
+            const id = e.target.closest("article").dataset.id;
+            const color = e.target.closest("article").dataset.color;
+            const condition = item => item._id === id && item.selectedColor === color;
+            let index = itemsInCart.findIndex(condition);
+            itemsInCart[index].quantity = +e.target.value;
+            localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart)); 
+            displayTotalQuantity();     
+            displayTotalPrice();  
+            } 
+    });
 
 //Delete the item when the user clicked on the deleteItem button
-document.body.addEventListener('click', function(e) {
-    if (e.target.classList.contains("deleteItem")) {
-        const id = e.target.closest("article").dataset.id;
-        const color = e.target.closest("article").dataset.color;
-        const condition = item => item._id === id && item.selectedColor === color;
-        let index = itemsInCart.findIndex(condition);
-        itemsInCart.splice(index, 1);
-        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
-        }
-        cartItems.innerHTML = "";
-        main();
-});
+    document.body.addEventListener('click', function(e) {
+        if (e.target.classList.contains("deleteItem")) {
+            e.stopPropagation()
+            const id = e.target.closest("article").dataset.id;
+            const color = e.target.closest("article").dataset.color;
+            const condition = item => item._id === id && item.selectedColor === color;
+            let index = itemsInCart.findIndex(condition);
+            itemsInCart.splice(index, 1);
+            localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));  
+            e.target.closest("article").remove();
+            displayTotalQuantity();     
+            displayTotalPrice();  
+            }
+    });
+
+// cartItems.addEventListener('click', function(e) {
+//     if (e.target.classList.contains("deleteItem")) {
+//         const id = e.target.closest("article").dataset.id;
+//         const color = e.target.closest("article").dataset.color;
+//         const condition = item => item._id === id && item.selectedColor === color;
+//         let index = itemsInCart.findIndex(condition);
+//         itemsInCart.splice(index, 1);
+//         localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
+//         }
+//         e.target.closest("article").remove();
+// });
 
 //Validate form
 form.addEventListener('submit', function(e) {
