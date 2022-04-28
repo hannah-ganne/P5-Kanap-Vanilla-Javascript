@@ -77,14 +77,11 @@ async function addToCart () {
 
 
 // update DOM
-async function main() {
-    const productData = await getProductData();
-    updateMetaTitle(productData);
-    updateItemImg(productData);
-    updateProductInfo(productData);
-}
-
-main();
+getProductData().then((product) => {
+    updateMetaTitle(product);
+    updateItemImg(product);
+    updateProductInfo(product);
+})
 
 // Event Listener
 addToCartBtn.addEventListener('click', addToCart)

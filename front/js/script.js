@@ -48,14 +48,10 @@ function createProductCard(product) {
 }
 
 // Put the cards on the homepage
-const main = async () => {
-    const productsData = await getProductsData();
-
-    for (let i = 0; i < productsData.length; i++) {
-        if(productsData[i]) {
-            items.appendChild(createProductCard(productsData[i]))
+getProductsData().then((products) => {
+    for (const product of products) {
+        if(product) {
+            items.appendChild(createProductCard(product))
         }
     }
-}
-
-main();
+})
