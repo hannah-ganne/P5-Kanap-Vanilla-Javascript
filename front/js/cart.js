@@ -13,12 +13,24 @@ const email = document.getElementById('email');
 
 let itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
 
-async function getProductsData() {
-    const res = await fetch('http://localhost:3000/api/products');
-    const data = await res.json();
-    return data;
-}
+// async function getProductsData() {
+//     const res = await fetch('http://localhost:3000/api/products');
+//     const data = await res.json();
+//     return data;
+// }
 
+const getProductsData = () => fetch('http://localhost:3000/api/products')
+   .then(res => {
+        if(res.ok) {
+            return res.json();
+        }
+        throw new Error("There's an error retrieving the data")
+   })
+   .then(data => data)
+   .catch(err => console.log(`There's an error: ${err}`));
+   
+
+//Get Prices
 async function getPrice(id) {
     const productsData = await getProductsData();
     const condition = item => item._id === id;
@@ -26,14 +38,6 @@ async function getPrice(id) {
     const price = productsData[index].price;
     return price
 }
-
-// Get Prices
-/*async function getPrices() {
-    let prices = [];
-    const productsData = await getProductsData();
-    productsData.forEach(item => {prices.push({'name': item.name, 'price': item.price})})
-    return prices;
-}*/
 
 // Create Cart Item Image
 function createImage(product) {
@@ -120,9 +124,7 @@ function updateQuantity(e) {
         const condition = item => item._id === id && item.selectedColor === color;
         let index = itemsInCart.findIndex(condition);
         itemsInCart[index].quantity = +e.target.value;
-        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart)); 
-        displayTotalQuantity();     
-        displayTotalPrice();  
+        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));  
         } 
     }
 
@@ -198,18 +200,30 @@ async function displayTotalPrice() {
 }
 
 // Update Cart Page DOM
-async function main() {
-    for (let i = 0; i < itemsInCart.length; i++) {
+// async function main() {
+//     for (let i = 0; i < itemsInCart.length; i++) {
 
-        if(itemsInCart[i]) {
-            cartItems.appendChild(await createCartItem(itemsInCart[i]));
+//         if(itemsInCart[i]) {
+//             cartItems.appendChild(await createCartItem(itemsInCart[i]));
+//         }
+//     }
+// }
+
+// main();
+// displayTotalQuantity();
+// displayTotalPrice();
+
+async function main() {
+    for (const item of itemsInCart) {
+        if (item) {
+            cartItems.appendChild(await createCartItem(item))
         }
     }
+    displayTotalQuantity();
+    displayTotalPrice();
 }
 
 main();
-displayTotalQuantity();
-displayTotalPrice();
 
 // Show input error message
 function showError(input, message) {
@@ -250,6 +264,8 @@ function checkEmail(input) {
 
 //Update quantity in localStorage when the user changed manually
 document.body.addEventListener('change', updateQuantity);
+document.body.addEventListener('change', displayTotalQuantity);     
+document.body.addEventListener('change', displayTotalPrice);
 
 //Delete the item when the user clicked on the deleteItem button
 document.body.addEventListener('click', function(e) {

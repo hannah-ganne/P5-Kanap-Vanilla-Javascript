@@ -2,16 +2,22 @@
 
 const items = document.getElementById('items');
 
-async function getProductsData() {
-    const res = await fetch('http://localhost:3000/api/products');
-    const data = await res.json();
-    return data;
-}
+// async function getProductsData() {
+//     const res = await fetch('http://localhost:3000/api/products');
+//     const data = await res.json();
+//     return data;
+// }
 
-//const getProductsData = () => fetch('http://localhost:3000/api/products')
-//    .then(res => res.json())
-//    .then(data => data)
-//    .catch(err => console.log("There's an error retrieving the data", err));
+const getProductsData = () => fetch('http://localhost:3000/api/products')
+   .then(res => {
+        if(res.ok) {
+            return res.json();
+        }
+        throw new Error("There's an error retrieving the data")
+   })
+   .then(data => data)
+   .catch(err => console.log(`There's an error: ${err}`));
+   
 
 // create product card info
 function createCardInfo(product) {
@@ -49,14 +55,22 @@ function createProductCard(product) {
 }
 
 // Put the cards on the homepage
-const main = async () => {
-    const productsData = await getProductsData();
-
-    for (let i = 0; i < productsData.length; i++) {
-        if(productsData[i]) {
-            items.appendChild(createProductCard(productsData[i]))
+getProductsData().then((products) => {
+    for (const product of products) {
+        if(product) {
+            items.appendChild(createProductCard(product))
         }
     }
-}
+})
 
-main();
+// const main = async () => {
+//     const productsData = await getProductsData();
+
+//     for (let i = 0; i < productsData.length; i++) {
+//         if(productsData[i]) {
+//             items.appendChild(createProductCard(productsData[i]))
+//         }
+//     }
+// }
+
+// main();
