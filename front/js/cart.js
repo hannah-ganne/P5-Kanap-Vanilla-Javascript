@@ -3,6 +3,7 @@
 const cartItems = document.getElementById('cart__items');
 const totalQuantity = document.getElementById('totalQuantity');
 const totalPrice = document.getElementById('totalPrice');
+const deleteItem = document.querySelector('.deleteItem')
 
 const form = document.querySelector('.cart__order__form');
 const firstName = document.getElementById('firstName');
@@ -267,32 +268,60 @@ function checkCity(input) {
 function checkEmail(input) {
     const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
-  regex.test(input.value) ? showSuccess(input) : showError(input, 'Please enter a valid email address');
+    regex.test(input.value) ? showSuccess(input) : showError(input, 'Please enter a valid email address');
 
 }
 
 // Event Listeners
 
 //Update quantity in localStorage when the user changed manually
+<<<<<<< HEAD
 document.body.addEventListener('change', updateQuantity);
 document.body.addEventListener('change', displayTotalQuantity);     
 document.body.addEventListener('change', displayTotalPrice);
+=======
+    document.body.addEventListener('change', function(e) {
+        if (e.target.classList.contains("itemQuantity")) {
+            e.stopPropagation()
+            const id = e.target.closest("article").dataset.id;
+            const color = e.target.closest("article").dataset.color;
+            const condition = item => item._id === id && item.selectedColor === color;
+            let index = itemsInCart.findIndex(condition);
+            itemsInCart[index].quantity = +e.target.value;
+            localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart)); 
+            displayTotalQuantity();     
+            displayTotalPrice();  
+            } 
+    });
+>>>>>>> version_innerHTML
 
 //Delete the item when the user clicked on the deleteItem button
-document.body.addEventListener('click', function(e) {
-    if (e.target.classList.contains("deleteItem")) {
-        const id = e.target.closest("article").dataset.id;
-        const color = e.target.closest("article").dataset.color;
-        const condition = item => item._id === id && item.selectedColor === color;
-        let index = itemsInCart.findIndex(condition);
-        itemsInCart.splice(index, 1);
-        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
-        }
-        cartItems.innerHTML = "";
-        main();
-        displayTotalQuantity();  
-        displayTotalPrice(); 
-});
+    document.body.addEventListener('click', function(e) {
+        if (e.target.classList.contains("deleteItem")) {
+            e.stopPropagation()
+            const id = e.target.closest("article").dataset.id;
+            const color = e.target.closest("article").dataset.color;
+            const condition = item => item._id === id && item.selectedColor === color;
+            let index = itemsInCart.findIndex(condition);
+            itemsInCart.splice(index, 1);
+            localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));  
+            e.target.closest("article").remove();
+            displayTotalQuantity();     
+            displayTotalPrice();  
+            }
+    });
+
+// cartItems.addEventListener('click', function(e) {
+//     if (e.target.classList.contains("deleteItem")) {
+//         const id = e.target.closest("article").dataset.id;
+//         const color = e.target.closest("article").dataset.color;
+//         const condition = item => item._id === id && item.selectedColor === color;
+//         let index = itemsInCart.findIndex(condition);
+//         itemsInCart.splice(index, 1);
+//         localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
+//         }
+//         e.target.closest("article").remove();
+// });
 
 //Validate form
 form.addEventListener('submit', function(e) {
