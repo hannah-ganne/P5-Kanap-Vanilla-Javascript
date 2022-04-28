@@ -190,14 +190,25 @@ function displayTotalQuantity() {
 // Display total price
 async function displayTotalPrice() {
     let total = 0;
-    for (let i = 0; i < itemsInCart.length; i++) {
-        const id = itemsInCart[i]._id
+    for (const item of itemsInCart) {
+        const id = item._id
         const price = await getPrice(id);
-        const quantity = itemsInCart[i].quantity;
+        const quantity = item.quantity;
         total += (price * quantity);
     }
     totalPrice.textContent = total;
 }
+
+// async function displayTotalPrice() {
+//     let total = 0;
+//     for (let i = 0; i < itemsInCart.length; i++) {
+//         const id = itemsInCart[i]._id
+//         const price = await getPrice(id);
+//         const quantity = itemsInCart[i].quantity;
+//         total += (price * quantity);
+//     }
+//     totalPrice.textContent = total;
+// }
 
 // Update Cart Page DOM
 // async function main() {
