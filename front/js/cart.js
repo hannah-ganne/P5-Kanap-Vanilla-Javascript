@@ -275,11 +275,6 @@ function checkEmail(input) {
 // Event Listeners
 
 //Update quantity in localStorage when the user changed manually
-<<<<<<< HEAD
-document.body.addEventListener('change', updateQuantity);
-document.body.addEventListener('change', displayTotalQuantity);     
-document.body.addEventListener('change', displayTotalPrice);
-=======
     document.body.addEventListener('change', function(e) {
         if (e.target.classList.contains("itemQuantity")) {
             e.stopPropagation()
@@ -293,7 +288,6 @@ document.body.addEventListener('change', displayTotalPrice);
             displayTotalPrice();  
             } 
     });
->>>>>>> version_innerHTML
 
 //Delete the item when the user clicked on the deleteItem button
     document.body.addEventListener('click', function(e) {
