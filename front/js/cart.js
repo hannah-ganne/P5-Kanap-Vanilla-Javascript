@@ -14,12 +14,6 @@ const email = document.getElementById('email');
 
 let itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
 
-// async function getProductsData() {
-//     const res = await fetch('http://localhost:3000/api/products');
-//     const data = await res.json();
-//     return data;
-// }
-
 const getProductsData = () => fetch('http://localhost:3000/api/products')
    .then(res => {
         if(res.ok) {
@@ -200,31 +194,7 @@ async function displayTotalPrice() {
     totalPrice.textContent = total;
 }
 
-// async function displayTotalPrice() {
-//     let total = 0;
-//     for (let i = 0; i < itemsInCart.length; i++) {
-//         const id = itemsInCart[i]._id
-//         const price = await getPrice(id);
-//         const quantity = itemsInCart[i].quantity;
-//         total += (price * quantity);
-//     }
-//     totalPrice.textContent = total;
-// }
-
-// Update Cart Page DOM
-// async function main() {
-//     for (let i = 0; i < itemsInCart.length; i++) {
-
-//         if(itemsInCart[i]) {
-//             cartItems.appendChild(await createCartItem(itemsInCart[i]));
-//         }
-//     }
-// }
-
-// main();
-// displayTotalQuantity();
-// displayTotalPrice();
-
+// Update cart page DOM
 async function main() {
     for (const item of itemsInCart) {
         if (item) {
@@ -255,21 +225,66 @@ function showSuccess(input) {
 function checkNames(input) {
     const regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
 
-    regex.test(input.value) ? showSuccess(input) : showError(input, 'Please check your name again')
+    regex.test(input.value) ? showSuccess(input) : showError(input, 'Veuillez vérifier votre nom à nouveau')
     }
+
+// Check is address is valid (number(s) followed by letters)
+function checkAddress(input) {
+    const regex = /^[0-9]+[,\s][a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,'-]+/u;
+
+    regex.test(input.value) ? showSuccess(input) : showError(input, 'Merci de bien vouloir enregistrer une adresse valide (ex - 29, rue Adrienne Bolland)');
+}
 
 // Check if city name is valid (no special characters or numbers)
 function checkCity(input) {
     const regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
-    regex.test(input.value) ? showSuccess(input) : showError(input, 'Please enter a valid city name')
+    regex.test(input.value) ? showSuccess(input) : showError(input, 'Merci de bien vouloir enregistrer une ville valide')
 }
 
 // Check if email address is valid
 function checkEmail(input) {
     const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
-    regex.test(input.value) ? showSuccess(input) : showError(input, 'Please enter a valid email address');
+    regex.test(input.value) ? showSuccess(input) : showError(input, 'Merci de bien vouloir enregistrer une adresse email valide');
+}
 
+// Handle Order Form Submit (API post)
+function handleFormSubmit(e) {
+    const url = 'http://localhost:3000/api/products/order';
+    const contact = {
+        "firstName": firstName.value,
+        "lastName": lastName.value,
+        "address": address.value,
+        "city": city.value,
+        "email": email.value
+    }
+    const products = [...new Set(itemsInCart.map(data => data._id))]
+    const data = {
+        "contact": contact,
+        "products": products
+    }
+
+    const fetchOptions = {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    }
+
+    fetch (url, fetchOptions)
+        .then (res =>  {
+            if(res.ok) {
+                return res.json();
+            }
+            throw new Error("There's an error sending the data")
+       })
+        .then (data => {
+            localStorage.clear();
+            document.location.href = `./confirmation.html?id=${data.orderId}`;
+        })
+        .catch(err => console.log(err)); 
 }
 
 // Event Listeners
@@ -305,24 +320,16 @@ function checkEmail(input) {
             }
     });
 
-// cartItems.addEventListener('click', function(e) {
-//     if (e.target.classList.contains("deleteItem")) {
-//         const id = e.target.closest("article").dataset.id;
-//         const color = e.target.closest("article").dataset.color;
-//         const condition = item => item._id === id && item.selectedColor === color;
-//         let index = itemsInCart.findIndex(condition);
-//         itemsInCart.splice(index, 1);
-//         localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));        
-//         }
-//         e.target.closest("article").remove();
-// });
-
 //Validate form
 form.addEventListener('submit', function(e) {
     e.preventDefault();
 
     checkNames(firstName);
     checkNames(lastName);
+    checkAddress(address);
     checkCity(city);
     checkEmail(email);
-})
+
+    handleFormSubmit(e);
+}
+)
