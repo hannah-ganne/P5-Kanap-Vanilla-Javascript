@@ -13,13 +13,6 @@ let str = window.location.href;
 let url = new URL(str);
 let productId = url.searchParams.get('id');
 
-// get product data
-// async function getProductData() {
-//     const res = await fetch(`http://localhost:3000/api/products/${productId}`);
-//     const data = await res.json();
-//     return data;
-// }
-
 const getProductData = () => fetch(`http://localhost:3000/api/products/${productId}`)
     .then(res => {
         if (res.ok) {
