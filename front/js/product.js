@@ -80,14 +80,5 @@ getProductData().then((product) => {
     updateProductInfo(product);
 })
 
-// async function main() {
-//     const productData = await getProductData();
-//     updateMetaTitle(productData);
-//     updateItemImg(productData);
-//     updateProductInfo(productData);
-// }
-
-// main();
-
 // Event Listener
 addToCartBtn.addEventListener('click', addToCart)

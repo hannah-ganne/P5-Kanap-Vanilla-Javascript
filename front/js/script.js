@@ -2,12 +2,6 @@
 
 const items = document.getElementById('items');
 
-// async function getProductsData() {
-//     const res = await fetch('http://localhost:3000/api/products');
-//     const data = await res.json();
-//     return data;
-// }
-
 const getProductsData = () => fetch('http://localhost:3000/api/products')
    .then(res => {
         if(res.ok) {
@@ -62,15 +56,3 @@ getProductsData().then((products) => {
         }
     }
 })
-
-// const main = async () => {
-//     const productsData = await getProductsData();
-
-//     for (let i = 0; i < productsData.length; i++) {
-//         if(productsData[i]) {
-//             items.appendChild(createProductCard(productsData[i]))
-//         }
-//     }
-// }
-
-// main();
