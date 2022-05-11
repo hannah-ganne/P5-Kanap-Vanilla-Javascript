@@ -99,11 +99,6 @@ function createContentSettingsQuantity(product) {
         'min': 1, 
         'max': 100, 
         'value': `${product.quantity}`})
-//    itemQuantity.setAttribute('type', 'number');
-//    itemQuantity.setAttribute('name', 'itemQuantity');
-//    itemQuantity.setAttribute('min', 1);
-//    itemQuantity.setAttribute('max', 100);
-//    itemQuantity.setAttribute('value', `${product.quantity}`);
 
     contentSettingsQuantity.appendChild(quantity);
     contentSettingsQuantity.appendChild(itemQuantity);
@@ -207,11 +202,14 @@ async function main() {
 
 main();
 
+let checkOk = true;
+
 // Show input error message
 function showError(input, message) {
     const parent = input.parentElement;
     const errorMsg = parent.lastElementChild;
     errorMsg.textContent = message;
+    checkOk = false;
 }
 
 // Show success (remove error message)
@@ -324,12 +322,15 @@ function handleFormSubmit(e) {
 form.addEventListener('submit', function(e) {
     e.preventDefault();
 
+    checkOk = true;
     checkNames(firstName);
     checkNames(lastName);
     checkAddress(address);
     checkCity(city);
     checkEmail(email);
 
-    handleFormSubmit(e);
+    if (checkOk) {
+        handleFormSubmit(e);
+    }
 }
 )
