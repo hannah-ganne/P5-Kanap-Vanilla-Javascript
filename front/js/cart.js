@@ -14,18 +14,28 @@ const email = document.getElementById('email');
 
 let itemsInCart = JSON.parse(localStorage.getItem('itemsInCart'));
 
+/**
+ * Fetches the data of all the products in the database
+ * 
+ * @returns {array} an array of objects (all the products in the database)
+ */
 const getProductsData = () => fetch('http://localhost:3000/api/products')
-   .then(res => {
-        if(res.ok) {
-            return res.json();
-        }
-        throw new Error("There's an error retrieving the data")
-   })
-   .then(data => data)
-   .catch(err => console.log(`There's an error: ${err}`));
-   
+    .then(res => {
+            if(res.ok) {
+                return res.json();
+            }
+            throw new Error("There's an error retrieving the data")
+    })
+    .then(data => data)
+    .catch(err => console.log(`There's an error: ${err}`));
+    
 
-//Get Prices
+/**
+ * Returns the price of a specific product in the cart
+ * 
+ * @param {string} id 
+ * @returns {number} price
+ */
 async function getPrice(id) {
     const productsData = await getProductsData();
     const condition = item => item._id === id;
@@ -34,7 +44,12 @@ async function getPrice(id) {
     return price
 }
 
-// Create Cart Item Image
+/**
+ * Creates a div containing image of an item in the cart
+ * 
+ * @param {object} product 
+ * @returns {object} cartItemImgEl
+ */
 function createImage(product) {
     const cartItemImgEl = document.createElement('div');
     cartItemImgEl.classList.add('cart__item__img');
@@ -46,10 +61,17 @@ function createImage(product) {
 
     cartItemImgEl.appendChild(cartItemImg);
 
+
     return cartItemImgEl
 }
 
-// Create Cart Item Content Description div
+/**
+ * Creates a div of description of an item in the cart 
+ * including product name, selected color, and price
+ * 
+ * @param {object} product 
+ * @returns {object} contentDescription
+ */
 async function createContentDescription(product) {
     const contentDescription = document.createElement('div');
     contentDescription.classList.add('cart__item__content__description');
@@ -72,7 +94,12 @@ async function createContentDescription(product) {
     return contentDescription;
 }
 
-// Create Cart Item Content Settings div
+/**
+ * Creates a div container for product quantity and delete button
+ * 
+ * @param {object} product 
+ * @returns {object} contentSettings
+ */
 function createContentSettings(product) {
     const contentSettings = document.createElement('div');
     contentSettings.classList.add('cart__item__content__settings');
@@ -83,7 +110,24 @@ function createContentSettings(product) {
     return contentSettings;
 }
 
-// Create Cart Item Content Setting Quantity div
+/**
+ * Sets multiple attributes
+ * 
+ * @param {object} element 
+ * @param {object} {'name': value}
+ */
+    function setAttributes(element, attribute) {
+        for (let key in attribute) {
+            element.setAttribute(key, attribute[key]);
+        }
+}
+
+/**
+ * Creates a div of product's quantity
+ * 
+ * @param {object} product 
+ * @returns {object} contentSettingsQuantity
+ */
 function createContentSettingsQuantity(product) {
     const contentSettingsQuantity = document.createElement('div');
     contentSettingsQuantity.classList.add('cart__item__content__settings__quantity');
@@ -106,7 +150,11 @@ function createContentSettingsQuantity(product) {
     return contentSettingsQuantity;
 }
 
-// Update Quantity in localStorage
+/**
+ * Updates the product's quantity in the local storage
+ * 
+ * @param e 
+ */
 function updateQuantity(e) {
     if (e.target.classList.contains("itemQuantity")) {
         const id = e.target.closest("article").dataset.id;
@@ -118,14 +166,11 @@ function updateQuantity(e) {
         } 
     }
 
-// Set multiple attributes
-function setAttributes(element, attribute) {
-    for (let key in attribute) {
-        element.setAttribute(key, attribute[key]);
-    }
-}
-
-// Create a deleteItem button
+/**
+ * Creates a delete button
+ * 
+ * @returns {object} deleteBtn
+ */
 function createDeleteBtn() {
     const deleteBtn = document.createElement('div');
     deleteBtn.classList.add('cart__item__content__settings__delete');
@@ -139,8 +184,12 @@ function createDeleteBtn() {
     return deleteBtn;
 }
 
-
-// Create Content div
+/**
+ * Creates a content div containing content description and content settings
+ * 
+ * @param {object} product 
+ * @returns {object} cartItemContent
+ */
 async function createContent(product) {
     const cartItemContent = document.createElement('div');
     cartItemContent.classList.add('cart__item__content')
@@ -151,7 +200,12 @@ async function createContent(product) {
     return cartItemContent;
 }
 
-// Create Cart Item article
+/**
+ * Creates an article of the item 
+ * 
+ * @param {object} product 
+ * @returns {object} cartItem
+ */
 async function createCartItem(product) {
     const cartItem = document.createElement('article');
     cartItem.classList.add('cart__item');
@@ -168,7 +222,9 @@ async function createCartItem(product) {
     return cartItem
 }
 
-// Display total quantity
+/**
+ * Displays total quantity of all the items in the cart
+ */
 function displayTotalQuantity() {
     let total = 0;
     itemsInCart.forEach(item => {
@@ -177,7 +233,9 @@ function displayTotalQuantity() {
     totalQuantity.textContent = total;
 }
 
-// Display total price
+/**
+ * Displays total price of all the items in the cart
+ */
 async function displayTotalPrice() {
     let total = 0;
     for (const item of itemsInCart) {
@@ -189,7 +247,9 @@ async function displayTotalPrice() {
     totalPrice.textContent = total;
 }
 
-// Update cart page DOM
+/**
+ * Updates the cart page DOM
+ */
 async function main() {
     for (const item of itemsInCart) {
         if (item) {
@@ -204,7 +264,12 @@ main();
 
 let checkOk = true;
 
-// Show input error message
+/**
+ * Shows error message
+ * 
+ * @param {object} input 
+ * @param {string} message 
+ */
 function showError(input, message) {
     const parent = input.parentElement;
     const errorMsg = parent.lastElementChild;
@@ -212,41 +277,68 @@ function showError(input, message) {
     checkOk = false;
 }
 
-// Show success (remove error message)
+/**
+ * Removes error message
+ * 
+ * @param {object} input 
+ */
 function showSuccess(input) {
     const parent = input.parentElement;
     const errorMsg = parent.lastElementChild;
     errorMsg.textContent = ""
 }
 
-// Check if First Name and Last Name are valid (no special characters or numbers)
+/**
+ * Checks if first name and last name are valid
+ * with non-authorized special characters and numbers
+ * 
+ * @param {object} input 
+ */
 function checkNames(input) {
     const regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
 
     regex.test(input.value) ? showSuccess(input) : showError(input, 'Veuillez vérifier votre nom à nouveau')
     }
 
-// Check is address is valid (number(s) followed by letters)
+/**
+ * Checks if address is valid
+ * with number(s) followed by comma or space and then letters
+ * 
+ * @param {object} input 
+ */
 function checkAddress(input) {
     const regex = /^[0-9]+[,\s][a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,'-]+/u;
 
     regex.test(input.value) ? showSuccess(input) : showError(input, 'Merci de bien vouloir enregistrer une adresse valide (ex - 29, rue Adrienne Bolland)');
 }
 
-// Check if city name is valid (no special characters or numbers)
+/**
+ * Checks if city name is valid
+ * with non-authorized special characters and numbers
+ * 
+ * @param {*} input 
+ */
 function checkCity(input) {
     const regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
     regex.test(input.value) ? showSuccess(input) : showError(input, 'Merci de bien vouloir enregistrer une ville valide')
 }
 
-// Check if email address is valid
+/**
+ * Checks if email address is valid
+ * 
+ * @param {*} input 
+ */
 function checkEmail(input) {
     const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
     regex.test(input.value) ? showSuccess(input) : showError(input, 'Merci de bien vouloir enregistrer une adresse email valide');
 }
 
-// Handle Order Form Submit (API post)
+/**
+ * Handles order form submit (API POST)
+ * 
+ * @param e 
+ */
 function handleFormSubmit(e) {
     const url = 'http://localhost:3000/api/products/order';
     const contact = {
@@ -277,7 +369,7 @@ function handleFormSubmit(e) {
                 return res.json();
             }
             throw new Error("There's an error sending the data")
-       })
+        })
         .then (data => {
             localStorage.clear();
             document.location.href = `./confirmation.html?id=${data.orderId}`;
@@ -287,7 +379,10 @@ function handleFormSubmit(e) {
 
 // Event Listeners
 
-//Update quantity in localStorage when the user changed manually
+/**
+ * Updates the total quantity and total price
+ * 
+ */
     document.body.addEventListener('change', function(e) {
         if (e.target.classList.contains("itemQuantity")) {
             e.stopPropagation()
@@ -302,7 +397,9 @@ function handleFormSubmit(e) {
             } 
     });
 
-//Delete the item when the user clicked on the deleteItem button
+/**
+ * Deletes the item when user clicks on the Supprimer button
+ */
     document.body.addEventListener('click', function(e) {
         if (e.target.classList.contains("deleteItem")) {
             e.stopPropagation()
@@ -318,7 +415,9 @@ function handleFormSubmit(e) {
             }
     });
 
-//Validate form
+/**
+ * Validates user input and once validated submits the order form
+ */
 form.addEventListener('submit', function(e) {
     e.preventDefault();
 

@@ -8,11 +8,16 @@ const colorSelect = document.getElementById('colors');
 const itemQuantity = document.getElementById('quantity');
 const addToCartBtn = document.getElementById('addToCart');
 
-// get the product ID
+// get the product ID from the url
 let str = window.location.href;
 let url = new URL(str);
 let productId = url.searchParams.get('id');
 
+/**
+ * Fetches the requested product's information
+ * 
+ * @returns {object} one specific product
+ */
 const getProductData = () => fetch(`http://localhost:3000/api/products/${productId}`)
     .then(res => {
         if (res.ok) {
@@ -23,13 +28,24 @@ const getProductData = () => fetch(`http://localhost:3000/api/products/${product
     .then(data => data)
     .catch(err => console.log(`There's an error: ${err}`));
 
-// update meta title
+
+/**
+ * Updates the title tag in the head
+ * 
+ * @param {object} product 
+ */
 function updateMetaTitle(product) {
     document.title = `${product.name}`
 }
 
-// update item image
+
 const productImg = document.createElement('img');
+
+/**
+ * Updates the product's photo
+ * 
+ * @param {object} product 
+ */
 function updateItemImg(product) {
 
     productImg.setAttribute('src', `${product.imageUrl}`);
@@ -38,7 +54,11 @@ function updateItemImg(product) {
     itemImg.appendChild(productImg);
 }
 
-// update product info
+/**
+ * Updates the product's information including product name, description, price, and color options
+ * 
+ * @param {object} product 
+ */
 function updateProductInfo(product) {
     productTitle.textContent = `${product.name}`;
     productDescription.textContent = `${product.description}`;
@@ -54,8 +74,9 @@ function updateProductInfo(product) {
     })
 }
 
-// Save items in localStorage (Add to cart button)
-
+/**
+ * Saves the selected color and quantity in the local storage
+ */
 async function addToCart () {
     let cart = JSON.parse(localStorage.getItem('itemsInCart')) || [];
 
@@ -73,7 +94,10 @@ async function addToCart () {
         localStorage.setItem('itemsInCart', JSON.stringify(cart));
     }
 
-// update DOM
+/**
+ * Displays the requested product's information on the product page
+ * 
+ */
 getProductData().then((product) => {
     updateMetaTitle(product);
     updateItemImg(product);
