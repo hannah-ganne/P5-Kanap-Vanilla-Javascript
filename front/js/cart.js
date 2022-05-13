@@ -151,22 +151,6 @@ function createContentSettingsQuantity(product) {
 }
 
 /**
- * Updates the product's quantity in the local storage
- * 
- * @param e 
- */
-function updateQuantity(e) {
-    if (e.target.classList.contains("itemQuantity")) {
-        const id = e.target.closest("article").dataset.id;
-        const color = e.target.closest("article").dataset.color;
-        const condition = item => item._id === id && item.selectedColor === color;
-        let index = itemsInCart.findIndex(condition);
-        itemsInCart[index].quantity = +e.target.value;
-        localStorage.setItem('itemsInCart', JSON.stringify(itemsInCart));  
-        } 
-    }
-
-/**
  * Creates a delete button
  * 
  * @returns {object} deleteBtn
