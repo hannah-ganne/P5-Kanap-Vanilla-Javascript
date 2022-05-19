@@ -81,14 +81,24 @@ async function addToCart () {
     let cart = JSON.parse(localStorage.getItem('itemsInCart')) || [];
 
     let item = cart.find(item => item._id === `${productId}` && item.selectedColor === `${colorSelect.value}`);
+
+    if (`${colorSelect.value}` ==="") {
+        alert("Veuillez choisir une couleur")
+    } 
+    if (`${itemQuantity.value}` <= 0 || `${itemQuantity.value}` > 100) {
+        alert("Veuillez saisir un nombre entre 1 et 100")
+    }
+
     if (item && `${colorSelect.value}` !== "" && `${itemQuantity.value}` <= 100 && `${itemQuantity.value}` > 0) {
         item.quantity += Number(`${itemQuantity.value}`);
+        alert(`${itemQuantity.value} article(s) en ${colorSelect.value} bien ajoutés au panier`)
     } else if (`${colorSelect.value}` !== "" && `${itemQuantity.value}` <= 100 && `${itemQuantity.value}` > 0) {
         const itemData = await getProductData();
         itemData.selectedColor = `${colorSelect.value}`;
         itemData.quantity = Number(`${itemQuantity.value}`)
         itemData.price = ""
         cart.push(itemData);
+        alert(`${itemQuantity.value} article(s) en ${colorSelect.value} bien ajouté(s) au panier`)
         }
 
         localStorage.setItem('itemsInCart', JSON.stringify(cart));
